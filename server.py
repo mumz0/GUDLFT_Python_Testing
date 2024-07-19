@@ -39,9 +39,22 @@ def index():
 
 @app.route("/show_summary", methods=["POST"])
 def show_summary():
-    """Render the summary page for a specific club based on email."""
-    club = [c for c in clubs if c["email"] == request.form["email"]][0]
-    return render_template("welcome.html", club=club, competitions=competitions)
+    """
+    Render the summary page for a specific club based on email.
+
+    This function retrieves a club based on the provided email from the form data.
+    If the email is found, it renders the 'welcome.html' template with the club and competitions data.
+    If the email is not found, it flashes an error message and redirects to the index page.
+
+    Returns:
+        str: Rendered HTML template.
+    """
+    try:
+        club = [club for club in clubs if club["email"] == request.form["email"]][0]
+        return render_template("welcome.html", club=club, competitions=competitions)
+    except IndexError:
+        flash("Email does not exist.")
+        return redirect("/")
 
 
 @app.route("/book/<competition>/<club>")
