@@ -28,7 +28,7 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: env/lib/pylint   # Use pylint from the virtual environment
+        entry: pylint   # Use pylint from the virtual environment
         language: system
         types: [python]
         args:
