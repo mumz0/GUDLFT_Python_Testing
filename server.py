@@ -22,13 +22,19 @@ def load_competitions():
     """Load and sort competitions from the JSON file."""
 
     date_format = "%Y-%m-%d %H:%M:%S"
-
+    now = datetime.now()
     with open("competitions.json", encoding="utf-8") as comps:
         competitions_list = json.load(comps)["competitions"]
 
         for competition in competitions_list:
             # Parse the competition date string into a datetime object
             competition["date"] = datetime.strptime(competition["date"], date_format)
+
+            # If the competition date is passed, it can't be booked.
+            if competition["date"] < now:
+                competition["canBeBooked"] = False
+            else:
+                competition["canBeBooked"] = True
 
         # Sort competitions by date(most recent first)
         competitions_list_sorted = sorted(competitions_list, key=lambda comp: comp["date"], reverse=True)
