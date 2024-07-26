@@ -8,6 +8,7 @@
         .flash-success {
             color: green;
         }
+
         .flash-error {
             color: red;
         }
@@ -17,19 +18,8 @@
 <body>
     <h2>Welcome, {{ club['email'] }}</h2><a href="{{ url_for('logout') }}">Logout</a>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li class="{% if 'Great - booking complete.' in message %}flash-success{% else %}flash-error{% endif %}">
-            {{ message }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
-
-    Points available: {{ club['points'] }}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    <p>Points available: {{ club['points'] }}</p>
     <h3>Competitions:</h3>
     <ul>
         {% for comp in competitions %}
@@ -37,20 +27,31 @@
             {{ comp['name'] }}<br />
             Booking:
             {% if comp['canBeBooked'] %}
-                <span class="flash-success">Open</span>
+            <span class="flash-success">Open</span>
             {% else %}
-                <span class="flash-error">Closed</span>
+            <span class="flash-error">Closed</span>
             {% endif %}
             <br />
             Date: {{ comp['date'] }}<br />
             Number of Places: {{ comp['numberOfPlaces'] }}
             {% if comp['numberOfPlaces']|int > 0 and comp['canBeBooked'] %}
-                <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">Book Places</a>
+            <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">Book Places</a>
             {% endif %}
+
+            {% for category, message in messages %}
+            {% if category == comp['name'] %}
+            <ul>
+                <li class="{% if 'Great - booking complete.' in message %}flash-success{% else %}flash-error{% endif %}">
+                    {{ message }}
+                </li>
+            </ul>
+            {% endif %}
+            {% endfor %}
         </li>
         <hr />
         {% endfor %}
     </ul>
+    {% endwith %}
 </body>
 
 </html>
