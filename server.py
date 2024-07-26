@@ -6,6 +6,7 @@ as well as handling user interactions.
 """
 
 import json
+from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 
@@ -18,10 +19,27 @@ def load_clubs():
 
 
 def load_competitions():
-    """Load competitions from the JSON file."""
+    """Load and sort competitions from the JSON file."""
+
+    date_format = "%Y-%m-%d %H:%M:%S"
+    now = datetime.now()
     with open("competitions.json", encoding="utf-8") as comps:
         competitions_list = json.load(comps)["competitions"]
-    return competitions_list
+
+        for competition in competitions_list:
+            # Parse the competition date string into a datetime object
+            competition["date"] = datetime.strptime(competition["date"], date_format)
+
+            # If the competition date is passed, it can't be booked.
+            if competition["date"] < now:
+                competition["canBeBooked"] = False
+            else:
+                competition["canBeBooked"] = True
+
+        # Sort competitions by date(most recent first)
+        competitions_list_sorted = sorted(competitions_list, key=lambda comp: comp["date"], reverse=True)
+
+    return competitions_list_sorted
 
 
 app = Flask(__name__)
@@ -51,6 +69,16 @@ def show_summary():
     """
     try:
         club = [club for club in clubs if club["email"] == request.form["email"]][0]
+
+        now = datetime.now()
+        for competition in competitions:
+
+            # If the competition date is passed, it can't be booked.
+            if competition["date"] < now:
+                competition["canBeBooked"] = False
+            else:
+                competition["canBeBooked"] = True
+
         return render_template("welcome.html", club=club, competitions=competitions)
     except IndexError:
         flash("Email does not exist.")
