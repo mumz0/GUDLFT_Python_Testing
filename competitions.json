@@ -2,8 +2,13 @@
     "competitions": [
         {
             "name": "Spring Festival",
-            "date": "2020-03-27 10:00:00",
+            "date": "2025-03-27 10:00:00",
             "numberOfPlaces": "25"
+        },
+        {
+            "name": "Eclatax Festival",
+            "date": "2024-09-27 10:00:00",
+            "numberOfPlaces": "50"
         },
         {
             "name": "Fall Classic",

@@ -1,36 +1,56 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Summary | GUDLFT Registration</title>
+    <style>
+        .flash-success {
+            color: green;
+        }
+        .flash-error {
+            color: red;
+        }
+    </style>
 </head>
-<body>
-        <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
 
-    {% with messages = get_flashed_messages()%}
+<body>
+    <h2>Welcome, {{ club['email'] }}</h2><a href="{{ url_for('logout') }}">Logout</a>
+
+    {% with messages = get_flashed_messages() %}
     {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li style="color: red;">{{ message }}</li>
+    <ul>
+        {% for message in messages %}
+        <li class="{% if 'Great - booking complete.' in message %}flash-success{% else %}flash-error{% endif %}">
+            {{ message }}
+        </li>
         {% endfor %}
-       </ul>
-    {% endif%}
-    Points available: {{club['points']}}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    Points available: {{ club['points'] }}
     <h3>Competitions:</h3>
     <ul>
-        {% for comp in competitions%}
+        {% for comp in competitions %}
         <li>
-            {{comp['name']}}<br />
-            Date: {{comp['date']}}</br>
-            Number of Places: {{comp['numberOfPlaces']}}
-            {%if comp['numberOfPlaces']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
+            {{ comp['name'] }}<br />
+            Booking:
+            {% if comp['canBeBooked'] %}
+                <span class="flash-success">Open</span>
+            {% else %}
+                <span class="flash-error">Closed</span>
+            {% endif %}
+            <br />
+            Date: {{ comp['date'] }}<br />
+            Number of Places: {{ comp['numberOfPlaces'] }}
+            {% if comp['numberOfPlaces']|int > 0 and comp['canBeBooked'] %}
+                <a href="{{ url_for('book', competition=comp['name'], club=club['name']) }}">Book Places</a>
+            {% endif %}
         </li>
         <hr />
         {% endfor %}
     </ul>
-    {%endwith%}
-
 </body>
+
 </html>
