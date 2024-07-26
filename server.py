@@ -116,17 +116,17 @@ def purchase_places():
 
     # Check if the total places booked by the club for this competition exceeds the allowed maximum
     if competition["clubBookings"][club_name] + places_required > 12:
-        flash("You cannot book more than 12 places per competition.")
+        flash("You cannot book more than 12 places per competition.", category=competition_name)
     elif places_required > int(club["points"]):
-        flash("You cannot redeem more points than you have available.")
+        flash("You cannot redeem more points than you have available.", category=competition_name)
     elif places_required > int(competition["numberOfPlaces"]):
-        flash("Not enough places available in the competition.")
+        flash("Not enough places available in the competition.", category=competition_name)
     else:
         # Deduct the points and update the number of places
         club["points"] = int(club["points"]) - places_required
         competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - places_required
         competition["clubBookings"][club_name] += places_required
-        flash("Great - booking complete.")
+        flash("Great - booking complete.", category=competition_name)
 
     return render_template("welcome.html", club=club, competitions=competitions)
 
